@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase_options.dart';
 
 import 'splash_screen.dart';
@@ -20,7 +21,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  
+  await Supabase.initialize(
+    url: 'https://wnpyaccjexfhoeglggxi.supabase.co',
+    anonKey: 'sb_publishable_AJpAz8fkWjnqB6OS_5iTOw_7chYnaXY',
+  );
 
   runApp(const LegalApp());
 }
@@ -46,9 +50,7 @@ class LegalApp extends StatelessWidget {
           ),
         ),
       ),
-
       home: const SplashScreen(),
-
       onGenerateRoute: (settings) {
         WidgetBuilder builder;
         switch (settings.name) {
