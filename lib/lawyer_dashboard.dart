@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AttorneyDashboard extends StatefulWidget {
-  const AttorneyDashboard({Key? key}) : super(key: key);
+  const AttorneyDashboard({super.key});
 
   @override
   State<AttorneyDashboard> createState() => _AttorneyDashboardState();
@@ -29,7 +29,7 @@ class _AttorneyDashboardState extends State<AttorneyDashboard>
         duration: const Duration(milliseconds: 800), vsync: this);
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slideUp = Tween<Offset>(
-      begin: Offset(0, 0.1),
+      begin: const Offset(0, 0.1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
@@ -329,10 +329,10 @@ class _ProfilePageState extends State<_ProfilePage> {
         OutlinedButton(
           onPressed: _logout,
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.white),
+            side: const BorderSide(color: Colors.white),
             minimumSize: const Size.fromHeight(50),
           ),
-          child: Text(
+          child: const Text(
             "Logout",
             style: TextStyle(color: Colors.white),
           ),

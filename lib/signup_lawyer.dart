@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SignupLawyerScreen extends StatefulWidget {
-  const SignupLawyerScreen({Key? key}) : super(key: key);
+  const SignupLawyerScreen({super.key});
 
   @override
   State<SignupLawyerScreen> createState() => _SignupLawyerScreenState();
@@ -26,7 +26,7 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
   void initState() {
     super.initState();
     _controller =
-        AnimationController(duration: Duration(milliseconds: 800), vsync: this);
+        AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
   }
@@ -46,7 +46,7 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
     if (_formKey.currentState?.validate() != true) return;
 
     setState(() => _loading = true);
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     setState(() => _loading = false);
 
     Navigator.of(context).pushReplacementNamed('/lawyer-dashboard');
@@ -56,7 +56,7 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up as Lawyer'),
+        title: const Text('Sign Up as Lawyer'),
         backgroundColor: Colors.white,
       ),
       body: FadeTransition(
@@ -73,23 +73,23 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
                   height: 150,
                   semanticLabel: 'Lawyer Signup Image',
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
                 // Full Name
                 TextFormField(
                   controller: _nameController,
                   decoration: _buildInputDecoration('Full Name'),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter your full name' : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Email
                 TextFormField(
                   controller: _emailController,
                   decoration: _buildInputDecoration('Email'),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value!.isEmpty) return 'Please enter your email';
@@ -99,35 +99,35 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Phone
                 TextFormField(
                   controller: _phoneController,
                   decoration: _buildInputDecoration('Phone Number'),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   keyboardType: TextInputType.phone,
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter your phone number' : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // License Number
                 TextFormField(
                   controller: _licenseController,
                   decoration: _buildInputDecoration('License Number'),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   validator: (value) => value!.isEmpty
                       ? 'Please enter your license number'
                       : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Password
                 TextFormField(
                   controller: _passwordController,
                   decoration: _buildInputDecoration('Password'),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   obscureText: true,
                   validator: (value) {
                     if (value!.isEmpty) return 'Please enter a password';
@@ -137,7 +137,7 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
                     return null;
                   },
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
                 _loading
                     ? CircularProgressIndicator(color: Colors.brown.shade300)
@@ -145,11 +145,11 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
                         onPressed: _submit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.brown.shade700,
-                          minimumSize: Size(double.infinity, 50),
+                          minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Sign Up',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
@@ -165,7 +165,7 @@ class _SignupLawyerScreenState extends State<SignupLawyerScreen>
   InputDecoration _buildInputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: Colors.white70),
+      labelStyle: const TextStyle(color: Colors.white70),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       filled: true,
       fillColor: Colors.brown.shade900,

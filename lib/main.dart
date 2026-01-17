@@ -11,10 +11,12 @@ import 'legal_assistant.dart';
 import 'help_support.dart';
 
 void main() {
-  runApp(LegalApp());
+  runApp(const LegalApp());
 }
 
 class LegalApp extends StatelessWidget {
+  const LegalApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,34 +34,34 @@ class LegalApp extends StatelessWidget {
         WidgetBuilder builder;
         switch (settings.name) {
           case '/splash':
-            builder = (BuildContext _) => SplashScreen();
+            builder = (BuildContext _) => const SplashScreen();
             break;
           case '/':
-            builder = (BuildContext _) => WelcomeScreen();
+            builder = (BuildContext _) => const WelcomeScreen();
             break;
           case '/login':
-            builder = (BuildContext _) => LoginScreen();
+            builder = (BuildContext _) => const LoginScreen();
             break;
           case '/signup_client':
-            builder = (BuildContext _) => SignupClientScreen();
+            builder = (BuildContext _) => const SignupClientScreen();
             break;
           case '/signup_lawyer':
-            builder = (BuildContext _) => SignupLawyerScreen();
+            builder = (BuildContext _) => const SignupLawyerScreen();
             break;
           case '/signup_lawfirms':
-            builder = (BuildContext _) => SignupLawFirmScreen();
+            builder = (BuildContext _) => const SignupLawFirmScreen();
             break;
           case '/client-dashboard':
-            builder = (BuildContext _) => ClientDashboard();
+            builder = (BuildContext _) => const ClientDashboard();
             break;
           case '/attorney-dashboard':
-            builder = (BuildContext _) => AttorneyDashboard();
+            builder = (BuildContext _) => const AttorneyDashboard();
             break;
           case '/legal-assistant-dashboard':
-            builder = (BuildContext _) => LegalAssistantDashboard();
+            builder = (BuildContext _) => const LegalAssistantDashboard();
             break;
           case '/help-support':
-            builder = (BuildContext _) => HelpSupport();
+            builder = (BuildContext _) => const HelpSupport();
             break;
           default:
             throw Exception('Invalid route: ${settings.name}');
@@ -69,7 +71,7 @@ class LegalApp extends StatelessWidget {
           pageBuilder: (context, animation, secondaryAnimation) =>
               builder(context),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final tween = Tween(begin: Offset(1, 0), end: Offset.zero)
+            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
                 .chain(CurveTween(curve: Curves.easeInOut));
             final fadeTween = Tween(begin: 0.0, end: 1.0);
             return SlideTransition(
@@ -80,7 +82,7 @@ class LegalApp extends StatelessWidget {
               ),
             );
           },
-          transitionDuration: Duration(milliseconds: 400),
+          transitionDuration: const Duration(milliseconds: 400),
         );
       },
     );

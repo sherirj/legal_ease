@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HelpSupport extends StatefulWidget {
-  const HelpSupport({Key? key}) : super(key: key);
+  const HelpSupport({super.key});
 
   @override
   State<HelpSupport> createState() => _HelpSupportState();
@@ -63,6 +63,11 @@ class _HelpSupportState extends State<HelpSupport>
       collapsedIconColor: Colors.white70,
       title: Text(item.question,
           style: const TextStyle(fontWeight: FontWeight.w600)),
+      backgroundColor: Colors.brown.shade800,
+      collapsedBackgroundColor: Colors.brown.shade900,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      collapsedShape:
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -72,11 +77,6 @@ class _HelpSupportState extends State<HelpSupport>
           ),
         ),
       ],
-      backgroundColor: Colors.brown.shade800,
-      collapsedBackgroundColor: Colors.brown.shade900,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      collapsedShape:
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 
@@ -100,7 +100,7 @@ class _HelpSupportState extends State<HelpSupport>
               ),
             ),
             const SizedBox(height: 16),
-            ..._faqItems.map(_buildFaqCard).toList(),
+            ..._faqItems.map(_buildFaqCard),
             const SizedBox(height: 32),
             Card(
               color: Colors.brown.shade800,

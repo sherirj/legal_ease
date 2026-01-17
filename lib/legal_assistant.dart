@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LegalAssistantDashboard extends StatefulWidget {
-  const LegalAssistantDashboard({Key? key}) : super(key: key);
+  const LegalAssistantDashboard({super.key});
 
   @override
   State<LegalAssistantDashboard> createState() =>
@@ -30,7 +30,7 @@ class _LegalAssistantDashboardState extends State<LegalAssistantDashboard>
         duration: const Duration(milliseconds: 800), vsync: this);
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slideUp = Tween<Offset>(
-      begin: Offset(0, 0.1),
+      begin: const Offset(0, 0.1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
@@ -274,7 +274,7 @@ class _AlertsPage extends StatelessWidget {
 class _Task {
   final String title;
   bool completed;
-  _Task({required this.title, this.completed = false});
+  _Task({required this.title});
 }
 
 class _ProfilePage extends StatefulWidget {
@@ -344,7 +344,7 @@ class _LegalAssistantProfilePageState extends State<_ProfilePage> {
             side: BorderSide(color: Colors.brown.shade800),
             minimumSize: const Size.fromHeight(50),
           ),
-          child: Text(
+          child: const Text(
             "Logout",
             style: TextStyle(color: Colors.white),
           ),

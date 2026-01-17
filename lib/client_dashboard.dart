@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class ClientDashboard extends StatefulWidget {
-  const ClientDashboard({Key? key}) : super(key: key);
+  const ClientDashboard({super.key});
 
   @override
   State<ClientDashboard> createState() => _ClientDashboardState();
@@ -17,7 +18,7 @@ class _ClientDashboardState extends State<ClientDashboard>
 
   static const List<Widget> _pagesBase = <Widget>[
     _ActiveCasesPage(),
-    _ChatbotShortcutPage(),
+    ChatbotShortcutPage(),
     _LegalDocumentsPage(),
     _ChatWithLawyerPage(),
     _BookLawyerPage(),
@@ -33,13 +34,13 @@ class _ClientDashboardState extends State<ClientDashboard>
         duration: const Duration(milliseconds: 800), vsync: this);
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slideUp = Tween<Offset>(
-      begin: Offset(0, 0.1),
+      begin: const Offset(0, 0.1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
 
     _pages = List.from(_pagesBase);
-    _pages.add(_ChatWithLawyerPage());
+    _pages.add(const _ChatWithLawyerPage());
   }
 
   @override
@@ -161,8 +162,16 @@ class _ActiveCasesPage extends StatelessWidget {
   }
 }
 
-class _ChatbotShortcutPage extends StatelessWidget {
-  const _ChatbotShortcutPage();
+class ChatbotShortcutPage extends StatelessWidget {
+  const ChatbotShortcutPage({super.key});
+
+  void _openChatbot(BuildContext context) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (_) => const ChatbotModal(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,9 +182,7 @@ class _ChatbotShortcutPage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
-          onTap: () {
-            Navigator.of(context).pushNamed('/legal-chatbot');
-          },
+          onTap: () => _openChatbot(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 32),
             child: Column(
@@ -205,6 +212,139 @@ class _ChatbotShortcutPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ChatbotModal extends StatefulWidget {
+  const ChatbotModal({super.key});
+
+  @override
+  State<ChatbotModal> createState() => _ChatbotModalState();
+}
+
+class _ChatbotModalState extends State<ChatbotModal> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _messages = [];
+  bool _loading = false;
+
+  Future<void> _sendMessage() async {
+    final question = _controller.text.trim();
+    if (question.isEmpty) return;
+
+    setState(() {
+      _messages.add({"role": "user", "text": question});
+      _controller.clear();
+      _loading = true;
+    });
+
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable('legalChatbot');
+      final response = await callable.call({'question': question});
+
+      // Expecting JSON { "answer": "..." }
+      final data = response.data;
+      final answer = data is Map && data['answer'] != null
+          ? data['answer'].toString()
+          : data.toString();
+
+      setState(() {
+        _messages.add({"role": "assistant", "text": answer});
+      });
+    } on FirebaseFunctionsException catch (e) {
+      setState(() {
+        _messages.add({
+          "role": "assistant",
+          "text": "⚠️ Firebase Error: ${e.message ?? e.code}"
+        });
+      });
+    } catch (e) {
+      setState(() {
+        _messages.add({
+          "role": "assistant",
+          "text": "⚠️ Unexpected error: ${e.toString()}"
+        });
+      });
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              'LegalEase Chatbot',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.brown.shade800,
+              ),
+            ),
+          ),
+          const Divider(),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final msg = _messages[index];
+                final isUser = msg["role"] == "user";
+                return Align(
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isUser
+                          ? Colors.brown.shade800
+                          : Colors.brown.shade200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      msg["text"]!,
+                      style: TextStyle(
+                        color: isUser ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          if (_loading)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: "Ask about the Constitution...",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -251,7 +391,7 @@ class _LegalDocumentsPage extends StatelessWidget {
                   color: Colors.brown.shade300, size: 16),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Opening document: \$doc')),
+                  const SnackBar(content: Text('Opening document: \$doc')),
                 );
               },
             ),
@@ -356,7 +496,7 @@ class _ChatWithLawyerPageState extends State<_ChatWithLawyerPage> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Type your message...',
-                    hintStyle: TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
                     fillColor: Colors.brown.shade800,
                     border: OutlineInputBorder(
@@ -614,10 +754,10 @@ class _ProfilePageState extends State<_ProfilePage> {
         OutlinedButton(
           onPressed: _logout,
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.white),
+            side: const BorderSide(color: Colors.white),
             minimumSize: const Size.fromHeight(50),
           ),
-          child: Text(
+          child: const Text(
             "Logout",
             style: TextStyle(color: Colors.white),
           ),
