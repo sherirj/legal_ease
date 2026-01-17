@@ -1,142 +1,228 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-const {setGlobalOptions} = require("firebase-functions");
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({maxInstances: 10});
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-/**
- * Firebase Cloud Function for LegalEase AI Chatbot
- * using DeepSeek API + Firestore context
- */
-
+// ----------------- index.js -----------------
+const { setGlobalOptions } = require("firebase-functions");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const axios = require("axios");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "touch.env") }); 
 
-// Initialize Firebase Admin SDK
-admin.initializeApp();
+const Anthropic = require("@anthropic-ai/sdk");
+
+// Max concurrent instances
+setGlobalOptions({ maxInstances: 10 });
+
+// Initialize Firebase Admin
+if (process.env.FIRESTORE_EMULATOR_HOST) {
+  console.log("🔥 Connected to Firestore Emulator at", process.env.FIRESTORE_EMULATOR_HOST);
+  admin.initializeApp({ projectId: "legalease-91e62" });
+} else {
+  admin.initializeApp();
+}
+
 const db = admin.firestore();
 
-// Optional: Control concurrency
-functions.setGlobalOptions({ maxInstances: 10 });
+// Initialize Claude API
+let anthropic = null;
+if (process.env.ANTHROPIC_API_KEY) {
+  anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  console.log("✅ Claude API key loaded successfully.");
+} else {
+  console.warn("⚠️ No ANTHROPIC_API_KEY found — Claude responses will be disabled.");
+}
 
-// ------------------------
-// LEGAL EASE CHATBOT LOGIC
-// ------------------------
+// ----------------- Legal Chatbot -----------------
+exports.legalChatbot = functions.https.onRequest(async (req, res) => {
+  try {
+    console.log("📩 Incoming chatbot request...");
+    const question = req.body?.question?.trim();
 
-exports.legalChatbot = functions.https.onCall(async (data, context) => {
-  const question = data?.question?.trim();
-
-  // Validate question
-  if (!question) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "A valid question is required."
-    );
-  }
-
-  const snapshot = await db.collection("legal_dataset").get();
-
-  let bestMatch = "";
-  let bestScore = 0;
-
-  snapshot.forEach((doc) => {
-    const text = (doc.data().text || "").toLowerCase();
-    const words = question.toLowerCase().split(/\s+/);
-    const matches = words.filter((word) => text.includes(word)).length;
-
-    if (matches > bestScore) {
-      bestScore = matches;
-      bestMatch = doc.data().text;
+    if (!question) {
+      return res.status(400).json({ error: "A valid question is required." });
     }
-  });
 
-  if (!bestMatch) {
-    bestMatch =
-      "No relevant article found in the Constitution of Pakistan.";
-  }
+    console.log("🧠 Searching Firestore for related law...");
+    const snapshot = await db.collection("legal_dataset").get();
 
-  const systemPrompt = `
-You are LegalEase — a legal assistant specializing in the Constitution of Pakistan.
-Use the context below to answer accurately, citing article numbers when possible.
+    let bestDoc = null;
+    let bestScore = 0;
+
+    snapshot.forEach((doc) => {
+      const { category, act, section, description, punishment } = doc.data();
+      const combinedText = `${category} ${act} ${section} ${description} ${punishment}`.toLowerCase();
+      const words = question.toLowerCase().split(/\s+/);
+      const matches = words.filter((word) => combinedText.includes(word)).length;
+
+      if (matches > bestScore) {
+        bestScore = matches;
+        bestDoc = doc.data();
+      }
+    });
+
+    if (!bestDoc) {
+      bestDoc = {
+        description: "No relevant law found in the dataset.",
+        act: "N/A",
+        section: "N/A",
+        punishment: "N/A",
+      };
+    }
+
+    const bestMatch = `
+Category: ${bestDoc.category || "N/A"}
+Act: ${bestDoc.act}
+Section: ${bestDoc.section}
+Description: ${bestDoc.description}
+Punishment: ${bestDoc.punishment}
+`;
+
+    const systemPrompt = `
+You are LegalEase — a legal assistant trained on Pakistan's Constitution and laws.
+
+Use the context below to answer clearly, referencing the law's act and section where relevant.
 
 Context:
 ${bestMatch}
 
 Rules:
-- Base your response ONLY on the above content.
-- Be formal, neutral, and precise.
-- If not found in the Constitution, politely say so.
-- Always include this line:
-  "Disclaimer: This is not legal advice, only educational information."
+- Base your answer ONLY on this context.
+- If the question is unrelated, respond: "Sorry, this law is not covered in my dataset."
+- Always include: "Disclaimer: This is not legal advice, only educational information."
 `;
 
-  // Fetch API key from Firebase config
-  const apiKey = functions.config().deepseek?.key;
-  if (!apiKey) {
-    throw new functions.https.HttpsError(
-      "internal",
-      "DeepSeek API key not configured. Run: firebase functions:config:set deepseek.key='YOUR_API_KEY'"
-    );
-  }
+    if (!anthropic) {
+      console.warn("⚠️ Skipping Claude request — no API key set.");
+      return res.json({
+        answer: "Claude API key not configured. Please add ANTHROPIC_API_KEY to your touch.env file.",
+        context: bestMatch,
+      });
+    }
 
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
-  };
+    const completion = await anthropic.messages.create({
+      model: "claude-3-5-haiku-20241022",
+      max_tokens: 800,
+      system: systemPrompt,
+      messages: [
+        { role: "user", content: question },
+      ],
+    });
 
-  const body = {
-    model: "deepseek-chat",
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: question },
-    ],
-  };
+    const aiAnswer = completion.content?.[0]?.text || "Sorry, I couldn't process that request.";
 
-  try {
-    const response = await axios.post(
-      "https://api.deepseek.com/chat/completions",
-      body,
-      { headers }
-    );
-
-    const aiAnswer = response.data?.choices?.[0]?.message?.content || 
-      "Sorry, I couldn't process that request.";
-
-    return {
+    return res.json({
       answer: aiAnswer,
       context: bestMatch,
-    };
+    });
+
   } catch (error) {
-    console.error("Error from DeepSeek:", error.message);
-    throw new functions.https.HttpsError(
-      "internal",
-      "Failed to get response from DeepSeek."
-    );
+    console.error("❌ Error in legalChatbot:", error);
+
+    if (error.response?.status === 401) {
+      return res.status(401).json({
+        error: "Invalid or unauthorized Claude API key. Please verify your ANTHROPIC_API_KEY.",
+      });
+    }
+
+    return res.status(500).json({
+      error: error.message || "An unexpected error occurred in the chatbot.",
+    });
+  }
+});
+
+// ----------------- Chat Notification -----------------
+exports.notifyOnNewMessage = functions.firestore
+  .document('chats/{chatId}/messages/{messageId}')
+  .onCreate(async (snap, context) => {
+    const message = snap.data();
+    const chatId = context.params.chatId;
+    if (!message) return null;
+
+    const senderId = message.userId;
+    const text = message.text || '';
+    const attachmentName = message.attachmentName || null;
+
+    const chatDoc = await admin.firestore().collection('chats').doc(chatId).get();
+    const chatData = chatDoc.data() || {};
+    const participants = chatData.participants || [];
+
+    const recipients = participants.filter(uid => uid !== senderId);
+    if (recipients.length === 0) return null;
+
+    const tokens = [];
+    for (const uid of recipients) {
+      const userDoc = await admin.firestore().collection('users').doc(uid).get();
+      const userData = userDoc.data() || {};
+      if (userData.fcmTokens) tokens.push(...userData.fcmTokens);
+    }
+
+    if (tokens.length === 0) return null;
+
+    const payload = {
+      notification: {
+        title: chatData.title || 'New message',
+        body: attachmentName ? `${attachmentName}` : (text.length > 80 ? text.substring(0, 80) + '...' : text),
+      },
+      data: {
+        chatId,
+        messageId: context.params.messageId,
+      }
+    };
+
+    try {
+      return await admin.messaging().sendToDevice(tokens, payload);
+    } catch (err) {
+      console.error('FCM error', err);
+      return null;
+    }
+  });
+
+// ----------------- Update Case Status -----------------
+exports.updateCaseStatus = functions.https.onCall(async (data, context) => {
+  try {
+    if (!context.auth) {
+      throw new functions.https.HttpsError('unauthenticated', 'User must be logged in.');
+    }
+
+    const { docId, status } = data;
+    if (!docId || !status) {
+      throw new functions.https.HttpsError('invalid-argument', 'docId and status are required.');
+    }
+
+    const bookingRef = db.collection('bookings').doc(docId);
+    const bookingSnap = await bookingRef.get();
+    if (!bookingSnap.exists) {
+      throw new functions.https.HttpsError('not-found', 'Booking not found.');
+    }
+
+    const bookingData = bookingSnap.data();
+    const lawyerId = bookingData?.lawyerId;
+    if (!lawyerId) {
+      throw new functions.https.HttpsError('failed-precondition', 'Booking has no assigned lawyer.');
+    }
+
+    // Update booking status
+    await bookingRef.update({ status });
+
+    // Update lawyer stats
+    const lawyerRef = db.collection('lawyers').doc(lawyerId);
+    const lawyerSnap = await lawyerRef.get();
+    if (lawyerSnap.exists) {
+      const data = lawyerSnap.data() || {};
+      const totalCases = (data.totalCases || 0) + 1;
+      let wonCases = data.wonCases || 0;
+      let lostCases = data.lostCases || 0;
+
+      if (status === 'Won') wonCases += 1;
+      if (status === 'Lost') lostCases += 1;
+
+      await lawyerRef.update({
+        totalCases,
+        wonCases,
+        lostCases
+      });
+    }
+
+    return { success: true, message: `Case marked as ${status}` };
+  } catch (error) {
+    console.error('updateCaseStatus error:', error);
+    throw new functions.https.HttpsError('internal', error.message);
   }
 });

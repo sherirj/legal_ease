@@ -1,0 +1,11 @@
+flask
+flask-cors
+requests
+faiss-cpu
+numpy
+python-dotenv
+camelot-py[cv]
+pandas
+PyPDF2
+openpyxl
+tqdm

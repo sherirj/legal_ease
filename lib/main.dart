@@ -1,16 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'splash_screen.dart';
 import 'welcome_screen.dart';
 import 'login_screen.dart';
-import 'signup_user.dart';
+import 'signup_client.dart';
 import 'signup_lawyer.dart';
 import 'signup_lawfirm.dart';
 import 'client_dashboard.dart';
 import 'lawyer_dashboard.dart';
 import 'legal_assistant.dart';
-import 'help_support.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  
+
   runApp(const LegalApp());
 }
 
@@ -20,62 +31,69 @@ class LegalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Legal App',
+      title: 'LegalEase',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.dark(
-          primary: Colors.brown.shade700,
-          secondary: Colors.brown.shade400,
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFFd4af37),
+          secondary: Color(0xFF2a2a2a),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFd4af37),
+            foregroundColor: Colors.black,
+          ),
         ),
       ),
-      initialRoute: '/',
+
+      home: const SplashScreen(),
+
       onGenerateRoute: (settings) {
         WidgetBuilder builder;
         switch (settings.name) {
-          case '/splash':
-            builder = (BuildContext _) => const SplashScreen();
-            break;
           case '/':
-            builder = (BuildContext _) => const WelcomeScreen();
+            builder = (_) => const WelcomeScreen();
+            break;
+          case '/splash':
+            builder = (_) => const SplashScreen();
             break;
           case '/login':
-            builder = (BuildContext _) => const LoginScreen();
+            builder = (_) => const LoginScreen();
             break;
           case '/signup_client':
-            builder = (BuildContext _) => const SignupClientScreen();
+            builder = (_) => const SignupClientScreen();
             break;
           case '/signup_lawyer':
-            builder = (BuildContext _) => const SignupLawyerScreen();
+            builder = (_) => const SignupLawyerScreen();
             break;
-          case '/signup_lawfirms':
-            builder = (BuildContext _) => const SignupLawFirmScreen();
+          case '/signup_lawfirm':
+            builder = (_) => const SignupLawFirmScreen();
             break;
           case '/client-dashboard':
-            builder = (BuildContext _) => const ClientDashboard();
+            builder = (_) => const ClientDashboard();
             break;
           case '/attorney-dashboard':
-            builder = (BuildContext _) => const AttorneyDashboard();
+            builder = (_) => const AttorneyDashboard();
             break;
           case '/legal-assistant-dashboard':
-            builder = (BuildContext _) => const LegalAssistantDashboard();
-            break;
-          case '/help-support':
-            builder = (BuildContext _) => const HelpSupport();
+            builder = (_) => const LegalAssistantDashboard();
             break;
           default:
-            throw Exception('Invalid route: ${settings.name}');
+            throw Exception('❌ Invalid route: ${settings.name}');
         }
 
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
               builder(context),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                .chain(CurveTween(curve: Curves.easeInOut));
+            final slideTween =
+                Tween(begin: const Offset(1, 0), end: Offset.zero)
+                    .chain(CurveTween(curve: Curves.easeInOut));
             final fadeTween = Tween(begin: 0.0, end: 1.0);
+
             return SlideTransition(
-              position: animation.drive(tween),
+              position: animation.drive(slideTween),
               child: FadeTransition(
                 opacity: animation.drive(fadeTween),
                 child: child,

@@ -1,29 +1,35 @@
 {
   "flutter": {
     "platforms": {
-      "android": {
-        "default": {
-          "projectId": "legalease-8d1ec",
-          "appId": "1:1022717568418:android:c3e838d60a5f8879c67efb",
-          "fileOutput": "android/app/google-services.json"
-        }
-      },
       "dart": {
         "lib/firebase_options.dart": {
-          "projectId": "legalease-8d1ec",
+          "projectId": "legalease-91e62",
           "configurations": {
-            "android": "1:1022717568418:android:c3e838d60a5f8879c67efb",
-            "ios": "1:1022717568418:ios:fc0b677c342f7b0bc67efb",
-            "macos": "1:1022717568418:ios:fc0b677c342f7b0bc67efb",
-            "web": "1:1022717568418:web:8d98bf1c438f5e1ac67efb",
-            "windows": "1:1022717568418:web:e966b800c9de93eac67efb"
+            "android": "1:499444899185:android:699515a11312e79791ead0",
+            "web": "1:499444899185:web:41f6bac70fef0be691ead0"
           }
+        }
+      },
+      "android": {
+        "default": {
+          "projectId": "legalease-91e62",
+          "appId": "1:499444899185:android:699515a11312e79791ead0",
+          "fileOutput": "android/app/google-services.json"
         }
       }
     }
   },
-  "functions": {
-    "source": "functions",
-    "predeploy": []
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "emulators":{
+    "firestore": {
+      "port": 8081
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    },
+    "singleProjectMode": true
   }
 }

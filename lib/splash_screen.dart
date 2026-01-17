@@ -33,9 +33,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // After 3 seconds, navigate to dashboard
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
@@ -48,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown.shade900,
+      backgroundColor: const Color.fromARGB(255, 2, 2, 2),
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -63,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                'assets/logo.png',
+                'assets/logo.jpeg',
                 width: 120,
                 height: 120,
               ),
