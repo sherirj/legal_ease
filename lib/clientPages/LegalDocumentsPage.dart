@@ -28,7 +28,8 @@ class _LegalDocumentsPageState extends State<LegalDocumentsPage> {
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         withData: kIsWeb,
-        type: FileType.any,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
       );
 
       if (result == null) {
