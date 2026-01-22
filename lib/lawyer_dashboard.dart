@@ -3,9 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'lawyerPages/assignedcasesPage.dart';
-import 'lawyerPages/lawyer_booking.dart';
 import 'lawyerPages/recentMessagespage.dart';
-import 'lawyerPages/legalCallendarPage.dart';
 import 'lawyerPages/LawyerProfile.dart';
 import 'services/case_services.dart';
 
@@ -32,7 +30,6 @@ class _AttorneyDashboardState extends State<AttorneyDashboard>
 
   static const List<Widget> _pages = <Widget>[
     AssignedCasesPage(),
-    LegalCalendarPage(),
     RecentMessagesPage(),
     LawyerProfilePage(),
   ];
@@ -184,9 +181,8 @@ class _AttorneyDashboardState extends State<AttorneyDashboard>
               ),
             ),
             _buildDrawerItem(Icons.work_outline, 'Cases', 0),
-            _buildDrawerItem(Icons.calendar_today_outlined, 'Calendar', 1),
-            _buildDrawerItem(Icons.message_outlined, 'Messages', 2),
-            _buildDrawerItem(Icons.person_outline, 'Profile', 3),
+            _buildDrawerItem(Icons.message_outlined, 'Messages', 1),
+            _buildDrawerItem(Icons.person_outline, 'Profile', 2),
             const Divider(color: Colors.white24),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.redAccent),
@@ -218,8 +214,6 @@ class _AttorneyDashboardState extends State<AttorneyDashboard>
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.work_outline), label: 'Cases'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined), label: 'Calendar'),
           BottomNavigationBarItem(
               icon: Icon(Icons.message_outlined), label: 'Messages'),
           BottomNavigationBarItem(
