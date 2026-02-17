@@ -34,23 +34,10 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
 
     final String lawyerId = currentUser.uid;
 
+    // Only filter by lawyerId, all sorting and filtering will be done client-side
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('bookings')
         .where('lawyerId', isEqualTo: lawyerId);
-
-    // Apply status filter
-    if (_selectedStatus != 'All') {
-      query = query.where('status', isEqualTo: _selectedStatus);
-    }
-
-    // Apply sorting
-    if (_sortBy == 'newest') {
-      query = query.orderBy('createdAt', descending: true);
-    } else if (_sortBy == 'oldest') {
-      query = query.orderBy('createdAt', descending: false);
-    } else if (_sortBy == 'date') {
-      query = query.orderBy('date', descending: false);
-    }
 
     final Stream<QuerySnapshot> bookingsStream = query.snapshots();
 
@@ -168,8 +155,7 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child:
-                        CircularProgressIndicator(color: Color(0xFFD4AF37)),
+                    child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
                   );
                 }
 
@@ -191,7 +177,79 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
                   );
                 }
 
-                final bookings = snapshot.data!.docs;
+                var bookings = snapshot.data!.docs;
+
+                // Client-side filtering by status
+                if (_selectedStatus != 'All') {
+                  bookings = bookings
+                      .where((doc) =>
+                          (doc.data() as Map<String, dynamic>)['status']
+                              .toString() ==
+                          _selectedStatus)
+                      .toList();
+                }
+
+                if (bookings.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No cases found for this status.',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                  );
+                }
+
+                // Client-side sorting
+                if (_sortBy == 'newest') {
+                  bookings.sort((a, b) {
+                    final dateA = (a.data()
+                        as Map<String, dynamic>)['createdAt'] as Timestamp?;
+                    final dateB = (b.data()
+                        as Map<String, dynamic>)['createdAt'] as Timestamp?;
+                    return (dateB?.toDate() ?? DateTime(1970))
+                        .compareTo(dateA?.toDate() ?? DateTime(1970));
+                  });
+                } else if (_sortBy == 'oldest') {
+                  bookings.sort((a, b) {
+                    final dateA = (a.data()
+                        as Map<String, dynamic>)['createdAt'] as Timestamp?;
+                    final dateB = (b.data()
+                        as Map<String, dynamic>)['createdAt'] as Timestamp?;
+                    return (dateA?.toDate() ?? DateTime(1970))
+                        .compareTo(dateB?.toDate() ?? DateTime(1970));
+                  });
+                } else if (_sortBy == 'date') {
+                  bookings.sort((a, b) {
+                    final aData = a.data() as Map<String, dynamic>;
+                    final bData = b.data() as Map<String, dynamic>;
+
+                    DateTime dateA = DateTime(1970);
+                    DateTime dateB = DateTime(1970);
+
+                    final rawDateA = aData['date'];
+                    if (rawDateA is Timestamp) {
+                      dateA = rawDateA.toDate();
+                    } else if (rawDateA is String) {
+                      try {
+                        dateA = DateTime.parse(rawDateA);
+                      } catch (e) {
+                        dateA = DateTime(1970);
+                      }
+                    }
+
+                    final rawDateB = bData['date'];
+                    if (rawDateB is Timestamp) {
+                      dateB = rawDateB.toDate();
+                    } else if (rawDateB is String) {
+                      try {
+                        dateB = DateTime.parse(rawDateB);
+                      } catch (e) {
+                        dateB = DateTime(1970);
+                      }
+                    }
+
+                    return dateA.compareTo(dateB);
+                  });
+                }
 
                 return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -223,6 +281,12 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
                         break;
                       case 'Lost':
                         statusColor = Colors.red;
+                        break;
+                      case 'Accepted':
+                        statusColor = Colors.blue;
+                        break;
+                      case 'Rejected':
+                        statusColor = Colors.redAccent;
                         break;
                       default:
                         statusColor = Colors.orange;
@@ -275,22 +339,14 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
                           child: Text(
                             data['status'] ?? 'Pending',
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CaseDetailsPage(
-                                caseData: data,
-                                docId: doc.id,
-                              ),
-                            ),
-                          );
+                          _showCaseActions(context, doc.id, data);
                         },
                       ),
                     );
@@ -314,9 +370,8 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
         });
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected
-            ? const Color(0xFFD4AF37)
-            : Colors.grey[800],
+        backgroundColor:
+            isSelected ? const Color(0xFFD4AF37) : Colors.grey[800],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -329,6 +384,242 @@ class _AssignedCasesPageState extends State<AssignedCasesPage> {
           fontSize: 12,
         ),
       ),
+    );
+  }
+
+  void _showCaseActions(
+      BuildContext context, String docId, Map<String, dynamic> caseData) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Case Title
+              Text(
+                caseData['description'] ?? 'Case Details',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // View Details Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CaseDetailsPage(
+                          caseData: caseData,
+                          docId: docId,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.info_outline),
+                  label: const Text(
+                    'View Details',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Accept Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _acceptCase(context, docId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.check_circle),
+                  label: const Text(
+                    'Accept Case',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Reject Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _showRejectDialog(context, docId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.cancel),
+                  label: const Text(
+                    'Reject Case',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Cancel Button
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _acceptCase(BuildContext context, String docId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(docId)
+          .update({
+        'status': 'accept',
+        'respondedAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✓ Case accepted successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to accept case: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showRejectDialog(BuildContext context, String docId) async {
+    final TextEditingController reasonCtrl = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF121212),
+          title: const Row(
+            children: [
+              Icon(Icons.cancel, color: Color(0xFFD4AF37)),
+              SizedBox(width: 8),
+              Text(
+                'Reject Case',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Please provide a reason for rejection:',
+                style: TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: reasonCtrl,
+                maxLines: 3,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter reason...',
+                  hintStyle: const TextStyle(color: Colors.white54),
+                  filled: true,
+                  fillColor: const Color(0xFF1A1A1A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('bookings')
+                      .doc(docId)
+                      .update({
+                    'status': 'rejected',
+                    'respondedAt': FieldValue.serverTimestamp(),
+                    'rejectionReason': reasonCtrl.text.trim(),
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('✗ Case rejected'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to reject case: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Reject'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

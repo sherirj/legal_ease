@@ -71,7 +71,7 @@ class _FileUploadsPageState extends State<FileUploadsPage> {
           SnackBar(
             backgroundColor: Colors.grey[850],
             content: Text('✅ Uploaded "$fileName"',
-                style: const TextStyle(color: Color(0xFFd4af37))),
+                style: const TextStyle(color: Color(0xFFD4AF37))),
           ),
         );
       }
@@ -96,7 +96,10 @@ class _FileUploadsPageState extends State<FileUploadsPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('🗑️ File deleted')),
+          const SnackBar(
+            content: Text('🗑️ File deleted'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
     } catch (e) {
@@ -124,11 +127,18 @@ class _FileUploadsPageState extends State<FileUploadsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Keeping theme consistent with previous or default?
-      // Previous code used Colors.brown.shade800 cards, implying a light or brown theme.
-      // But LegalDocumentsPage was black. I'll stick to what the file implies or basic scaffold.
-      // Let's use a background that fits 'Law Firm' - maybe white/cream?
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1E1E1E),
+        title: const Text(
+          'File Uploads',
+          style: TextStyle(
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _user != null
             ? _docsRef
@@ -139,12 +149,17 @@ class _FileUploadsPageState extends State<FileUploadsPage> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-                child: Text('Error: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.red)));
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+            );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+            );
           }
 
           final docs = snapshot.data?.docs ?? [];
@@ -152,69 +167,90 @@ class _FileUploadsPageState extends State<FileUploadsPage> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(
-                'File Uploads',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.brown.shade700, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
               if (docs.isEmpty)
-                const Center(
-                    child: Padding(
+                const Padding(
                   padding: EdgeInsets.all(32.0),
-                  child: Text("No documents uploaded yet."),
-                )),
-              ...docs.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                final name = data['name'] ?? 'Document';
-                final url = data['url'] ?? '';
-
-                return Card(
-                  color: Colors.brown.shade800,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: ListTile(
-                    leading: Icon(Icons.insert_drive_file_outlined,
-                        color: Colors.brown.shade300),
-                    title:
-                        Text(name, style: const TextStyle(color: Colors.white)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.open_in_new,
-                              color: Colors.brown.shade300),
-                          onPressed: () => _openDocument(url, name),
-                        ),
-                        IconButton(
-                          icon:
-                              const Icon(Icons.delete, color: Colors.redAccent),
-                          onPressed: () => _deleteDocument(doc.id, url),
-                        ),
-                      ],
+                  child: Center(
+                    child: Text(
+                      "No documents uploaded yet.",
+                      style: TextStyle(color: Colors.white70),
                     ),
                   ),
-                );
-              }).toList(), // using .toList() (though map returns iterable, spread operator works)
+                )
+              else
+                ...docs.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final name = data['name'] ?? 'Document';
+                  final url = data['url'] ?? '';
 
-              // Keeping the "files.map" structure from before but interactive now
-
+                  return Card(
+                    color: Colors.grey[900],
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: const BorderSide(
+                        color: Color(0xFFD4AF37),
+                        width: 0.5,
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.insert_drive_file_outlined,
+                        color: Color(0xFFD4AF37),
+                      ),
+                      title: Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.open_in_new,
+                              color: Color(0xFFD4AF37),
+                            ),
+                            onPressed: () => _openDocument(url, name),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                            ),
+                            onPressed: () => _deleteDocument(doc.id, url),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 icon: _uploading
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(color: Colors.white))
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 2,
+                        ),
+                      )
                     : const Icon(Icons.file_upload),
-                label: Text(_uploading ? 'Uploading...' : 'Upload New File'),
+                label: Text(
+                  _uploading ? 'Uploading...' : 'Upload New File',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown.shade700,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))),
+                  backgroundColor: const Color(0xFFD4AF37),
+                  foregroundColor: Colors.black,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 onPressed: _uploading ? null : _uploadDocument,
               ),
             ],

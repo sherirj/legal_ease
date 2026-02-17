@@ -1,170 +1,26 @@
 [
-  {
-    "Category": "Category",
-    "Act": "Act",
-    "Section": "Section 73",
-    "Description": "Section Description Punishment Contract Breach Contract Act, 1872",
-    "Punishment": "Compensation"
-  },
-  {
-    "Category": "Transfer of",
-    "Act": "Property Act,",
-    "Section": "Sections 5–54",
-    "Description": "1882 Transfer of immovable property Civil suit for possession /",
-    "Punishment": "injunction Specific Relief Specific Relief"
-  },
-  {
-    "Category": "Specific Relief",
-    "Act": "Act, 1877",
-    "Section": "Sections 5–13",
-    "Description": "",
-    "Punishment": "Relief for"
-  },
-  {
-    "Category": "Civil Procedure",
-    "Act": "Code, 1908",
-    "Section": "",
-    "Description": "Order 20 Rule 1 Civil remedies for harm",
-    "Punishment": "Compensation,"
-  },
-  {
-    "Category": "Defamation",
-    "Act": "Ordinance,",
-    "Section": "Sections 3, 8",
-    "Description": "2002 Harm to reputation Up to PKR 100,000 +",
-    "Punishment": "public apology"
-  },
-  {
-    "Category": "Category",
-    "Act": "Act",
-    "Section": "Section 302",
-    "Description": "Section Description Punishment Murder Pakistan Penal Code (PPC), 1860 Intentional killing",
-    "Punishment": "Death penalty"
-  },
-  {
-    "Category": "Murder",
-    "Act": "PPC, 1860",
-    "Section": "Section 324",
-    "Description": "Attempt to",
-    "Punishment": "cause death"
-  },
-  {
-    "Category": "Theft",
-    "Act": "PPC, 1860",
-    "Section": "Section 378,",
-    "Description": "379 Theft of movable property Up to 3 years +",
-    "Punishment": "fine"
-  },
-  {
-    "Category": "Rape",
-    "Act": "PPC + Anti-",
-    "Section": "Section 375,",
-    "Description": "Rape Act, 2021 376 Sexual assault Min 10 years to",
-    "Punishment": "death penalty"
-  },
-  {
-    "Category": "Blasphemy",
-    "Act": "PPC, 1860",
-    "Section": "",
-    "Description": "Sections 295–298 Insulting religion or prophets From 3 years",
-    "Punishment": "to death penalty"
-  },
-  {
-    "Category": "Cybercrime",
-    "Act": "PECA (2016)",
-    "Section": "Sections 20,",
-    "Description": "21, 24 Cyber harassment, blackmail, defamation Up to 7 years",
-    "Punishment": "imprisonment + fine"
-  },
-  {
-    "Category": "Terrorism",
-    "Act": "Anti-Terrorism",
-    "Section": "Section 6–7",
-    "Description": "Act, 1997 Use of force to coerce state/populace",
-    "Punishment": "Death or life imprisonment"
-  },
-  {
-    "Category": "Category",
-    "Act": "Act",
-    "Section": "Section 5",
-    "Description": "Section Description Punishment Marriage Registration Muslim Family Laws Ordinance, 1961 Nikah must be registered",
-    "Punishment": "Fine up to PKR"
-  },
-  {
-    "Category": "Laws",
-    "Act": "Ordinance,",
-    "Section": "Section 6",
-    "Description": "1961 Marrying again without first wife’s permission 1 year jail +",
-    "Punishment": "fine"
-  },
-  {
-    "Category": "Laws",
-    "Act": "Ordinance,",
-    "Section": "Section 7 Sections 7–25 Section 4",
-    "Description": "1961 Notice of divorce must be sent to chairman Divorce not effective until approved Child Custody Guardian and Wards Act, 1890 Appointment of guardian Court decides in child’s best interest Child Marriage Child Marriage Restraint Act, 1929 Marriage under age 1 month jail +",
-    "Punishment": "fine"
-  },
-  {
-    "Category": "Family Courts",
-    "Act": "Act, 1964",
-    "Section": "Section 5(c)",
-    "Description": "Financial maintenance for wife/children Court-ordered monthly",
-    "Punishment": "support"
-  },
-  {
-    "Category": "Type",
-    "Act": "Act",
-    "Section": "Section 2(e), 3",
-    "Description": "Section Description Punishment Physical Abuse Domestic Violence (Sindh) Act, 2013 Bodily harm by family member",
-    "Punishment": "2 years + fine +"
-  },
-  {
-    "Category": "Abuse",
-    "Act": "Punjab DV Act,",
-    "Section": "Section 2(f), 3",
-    "Description": "2016 Insults, threats, emotional harm Restraining",
-    "Punishment": "orders + fine"
-  },
-  {
-    "Category": "Abuse",
-    "Act": "KPK DV Act,",
-    "Section": "Section 2(h), 3",
-    "Description": "2021 Controlling access to finances Restitution +",
-    "Punishment": "relief"
-  },
-  {
-    "Category": "Sexual Abuse",
-    "Act": "PPC",
-    "Section": "",
-    "Description": "Section Coercive 10 years to 375–376 sexual behavior",
-    "Punishment": "death penalty"
-  },
-  {
-    "Category": "death penalty",
-    "Act": "Dowry Violence",
-    "Section": "Section 302",
-    "Description": "PPC + Qisas & Diyat Killing for dowry",
-    "Punishment": "Death or life imprisonment"
-  },
-  {
-    "Category": "Harassment",
-    "Act": "PECA + PPC",
-    "Section": "Section 20, 506",
-    "Description": "Threats or harassment 2–7 years +",
-    "Punishment": "fine"
-  },
-  {
-    "Category": "Domestic",
-    "Act": "Violence Acts",
-    "Section": "Section 441",
-    "Description": "General Child witnesses abuse Court action or removal Forced Eviction PPC + DV Acts Unlawful removal from home",
-    "Punishment": "Imprisonment"
-  },
-  {
-    "Category": "Acid Crime",
-    "Act": "Prevention Act,",
-    "Section": "",
-    "Description": "2011 Section 336B/C Acid attack in domestic conflict 14 years to life + PKR 1 million",
-    "Punishment": "fine"
-  }
+  "Category: Category\nAct/Ordinance: Act\nSection: Section 73\nDescription: Section Description Punishment Contract Breach Contract Act, 1872\nPunishment/Relief: Compensation",
+  "Category: Transfer of\nAct/Ordinance: Property Act,\nSection: Sections 5–54\nDescription: 1882 Transfer of immovable property Civil suit for possession /\nPunishment/Relief: injunction Specific Relief Specific Relief",
+  "Category: Specific Relief\nAct/Ordinance: Act, 1877\nSection: Sections 5–13\nDescription: N/A\nPunishment/Relief: Relief for",
+  "Category: Civil Procedure\nAct/Ordinance: Code, 1908\nSection: N/A\nDescription: Order 20 Rule 1 Civil remedies for harm\nPunishment/Relief: Compensation,",
+  "Category: Defamation\nAct/Ordinance: Ordinance,\nSection: Sections 3, 8\nDescription: 2002 Harm to reputation Up to PKR 100,000 +\nPunishment/Relief: public apology",
+  "Category: Category\nAct/Ordinance: Act\nSection: Section 302\nDescription: Section Description Punishment Murder Pakistan Penal Code (PPC), 1860 Intentional killing\nPunishment/Relief: Death penalty",
+  "Category: Murder\nAct/Ordinance: PPC, 1860\nSection: Section 324\nDescription: Attempt to\nPunishment/Relief: cause death",
+  "Category: Theft\nAct/Ordinance: PPC, 1860\nSection: Section 378,\nDescription: 379 Theft of movable property Up to 3 years +\nPunishment/Relief: fine",
+  "Category: Rape\nAct/Ordinance: PPC + Anti-\nSection: Section 375,\nDescription: Rape Act, 2021 376 Sexual assault Min 10 years to\nPunishment/Relief: death penalty",
+  "Category: Blasphemy\nAct/Ordinance: PPC, 1860\nSection: N/A\nDescription: Sections 295–298 Insulting religion or prophets From 3 years\nPunishment/Relief: to death penalty",
+  "Category: Cybercrime\nAct/Ordinance: PECA (2016)\nSection: Sections 20,\nDescription: 21, 24 Cyber harassment, blackmail, defamation Up to 7 years\nPunishment/Relief: imprisonment + fine",
+  "Category: Terrorism\nAct/Ordinance: Anti-Terrorism\nSection: Section 6–7\nDescription: Act, 1997 Use of force to coerce state/populace\nPunishment/Relief: Death or life imprisonment",
+  "Category: Category\nAct/Ordinance: Act\nSection: Section 5\nDescription: Section Description Punishment Marriage Registration Muslim Family Laws Ordinance, 1961 Nikah must be registered\nPunishment/Relief: Fine up to PKR",
+  "Category: Laws\nAct/Ordinance: Ordinance,\nSection: Section 6\nDescription: 1961 Marrying again without first wife’s permission 1 year jail +\nPunishment/Relief: fine",
+  "Category: Laws\nAct/Ordinance: Ordinance,\nSection: Section 7 Sections 7–25 Section 4\nDescription: 1961 Notice of divorce must be sent to chairman Divorce not effective until approved Child Custody Guardian and Wards Act, 1890 Appointment of guardian Court decides in child’s best interest Child Marriage Child Marriage Restraint Act, 1929 Marriage under age 1 month jail +\nPunishment/Relief: fine",
+  "Category: Family Courts\nAct/Ordinance: Act, 1964\nSection: Section 5(c)\nDescription: Financial maintenance for wife/children Court-ordered monthly\nPunishment/Relief: support",
+  "Category: Type\nAct/Ordinance: Act\nSection: Section 2(e), 3\nDescription: Section Description Punishment Physical Abuse Domestic Violence (Sindh) Act, 2013 Bodily harm by family member\nPunishment/Relief: 2 years + fine +",
+  "Category: Abuse\nAct/Ordinance: Punjab DV Act,\nSection: Section 2(f), 3\nDescription: 2016 Insults, threats, emotional harm Restraining\nPunishment/Relief: orders + fine",
+  "Category: Abuse\nAct/Ordinance: KPK DV Act,\nSection: Section 2(h), 3\nDescription: 2021 Controlling access to finances Restitution +\nPunishment/Relief: relief",
+  "Category: Sexual Abuse\nAct/Ordinance: PPC\nSection: N/A\nDescription: Section Coercive 10 years to 375–376 sexual behavior\nPunishment/Relief: death penalty",
+  "Category: death penalty\nAct/Ordinance: Dowry Violence\nSection: Section 302\nDescription: PPC + Qisas & Diyat Killing for dowry\nPunishment/Relief: Death or life imprisonment",
+  "Category: Harassment\nAct/Ordinance: PECA + PPC\nSection: Section 20, 506\nDescription: Threats or harassment 2–7 years +\nPunishment/Relief: fine",
+  "Category: Domestic\nAct/Ordinance: Violence Acts\nSection: Section 441\nDescription: General Child witnesses abuse Court action or removal Forced Eviction PPC + DV Acts Unlawful removal from home\nPunishment/Relief: Imprisonment",
+  "Category: Acid Crime\nAct/Ordinance: Prevention Act,\nSection: N/A\nDescription: 2011 Section 336B/C Acid attack in domestic conflict 14 years to life + PKR 1 million\nPunishment/Relief: fine"
 ]

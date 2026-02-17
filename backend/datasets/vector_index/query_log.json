@@ -30,5 +30,45 @@
   {
     "question": "in pakistan constitution",
     "answer": "Here's the response in Roman Urdu:\n\nPakistan ke Constitution mein, fundamental rights aur state ke principles bahut ahem hain. Constitution 1973 mein qabool kiya gaya aur is mein 12 chapters aur 280 articles shamil hain. Ye document Pakistan ki supreme legal framework hai jo:\n\n1. Fundamental Rights ki guarantee deta hai (Articles 8-28)\n2. State ke principles of policy ko define karta hai\n3. Governmental structure ko outline karta hai\n4. Judiciary, executive, aur legislative branches ke powers ko specify karta hai\n\nConstitution ke mutabiq, har citizen ko:\n- Equality before law\n- Freedom of speech\n- Religious azadi\n- Protection against discrimination\n- Fundamental human rights\n\nKey constitutional features:\n- Federal parliamentary system\n- Islam ko state religion declare kiya gaya\n- Separation of powers\n- Independent judiciary\n- Democratic governance ke principles\n\nYe constitution Pakistan ke legal aur political system ki buniyad hai, jo citizens ke rights aur state ke functions ko protect karta hai."
+  },
+  {
+    "question": "What are the tax laws of Pakistan?",
+    "answer": "Mujhe afsos hai, lekin mojooda dataset mein is sawal ka koi mustanad qanooni jawab mojood nahi hai. Is liye main is hawale se raaye faraham nahi kar sakta."
+  },
+  {
+    "question": "Civil suit file karne ka tareeqa kya hai?",
+    "answer": "Mujhe afsos hai, lekin mojooda dataset mein is sawal ka koi mustanad qanooni jawab mojood nahi hai. Is liye main is hawale se raaye faraham nahi kar sakta."
+  },
+  {
+    "question": "tell me about punishment of murder",
+    "answer": "I’m sorry, but the provided dataset does not contain sufficient relevant legal information to answer this question."
+  },
+  {
+    "question": "What are the tax laws of Pakistan?",
+    "answer": "Here's the response in Roman Urdu:\n\nPakistan mein tax qanoon bohat ahem aur complex hain. Mukhtalif tax qawaneen hain jo alag alag sectors aur income sources par laagu hoti hain:\n\n1. Income Tax Ordinance 2001:\n- Personal income tax\n- Corporate tax\n- Capital gains tax\n- Withholding tax\n\n2. Sales Tax Act 1990:\n- Goods aur services par tax\n- Federal aur provincial sales tax\n\n3. Federal Excise Act:\n- Luxury goods par additional tax\n- Specific products par excise duty\n\n4. Customs Act:\n- Import aur export par tax\n- Tariff rates ka regulation\n\n5. Property Tax:\n- Immovable property par tax\n- Municipal aur provincial levels par collection\n\nKey points:\n- Federal Board of Revenue (FBR) tax collection ka primary agency hai\n- Tax rates income level aur business type par depend karte hain\n- Annual tax returns filing mandatory hai\n- Tax evasion par strict legal action ho sakti hai\n\nHar taxpayer ko in qawaneen ki detailed samajh honi chahiye."
+  },
+  {
+    "question": "What are tax laws of Pakistan?",
+    "answer": "Maaf farmaye, provided context mein Pakistan ke tax laws ke baare mein koi specific معلومات nahi hai. Is dataset mein tax qanoon ke mutalliq koi detail shamil nahi hai. Isi liye main is sawal ka exact jawab nahi de sakta.\n\nAgar aapko detailed tax law information chahiye, to aapko Pakistan Income Tax Ordinance, 2001 ya Federal Board of Revenue (FBR) ke official documents dekhne honge.",
+    "sources": 5,
+    "grounded": true
+  },
+  {
+    "question": "haq mehar na daynay pay konsa section lgai ga",
+    "answer": "Meray samne di gai context mein mehar na dene ke liye specific section nahi hai. Is liye, main aapko exact legal section nahi bata sakta. \n\nHaalanki, Muslim Family Laws Ordinance, 1961 ke Section 5 mein nikah registration ke baare mein zikr hai, lekin mehar ke na dene ki saza ka clear reference nahi hai.\n\nAgar aapko precise legal advice chahiye, to aapko ek qualified Pakistani vakeel se salah leni chahiye jo is mamle ki tafseelat se vaqif ho.",
+    "sources": 5,
+    "grounded": true
+  },
+  {
+    "question": "ok thanks",
+    "answer": "I apologize, but there is no specific legal query or request in your message. As a professional legal assistant, I am prepared to provide legal guidance based on the context provided. If you have a specific legal question related to Pakistani law, please feel free to ask, and I will assist you using the available legal context.",
+    "sources": 5,
+    "grounded": true
+  },
+  {
+    "question": "tell me about attempt to murder?",
+    "answer": "Based on the provided context, I can provide information about attempt to murder under Section 324 of the Pakistan Penal Code (PPC), 1860:\n\nSection 324 relates to the criminal offense of \"Attempt to cause death\". While the specific details of the punishment are not fully elaborated in the given context, the section is categorized under murder and involves an intentional attempt to cause death.\n\nThe legal classification indicates this is a serious criminal offense under Pakistani law, falling under the broader category of crimes against human life. \n\nFor precise sentencing details or specific legal interpretations, I recommend consulting the full text of the Pakistan Penal Code or seeking advice from a qualified legal professional who can provide comprehensive guidance on the specific provisions of Section 324.",
+    "sources": 5,
+    "grounded": true
   }
 ]

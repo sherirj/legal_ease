@@ -332,7 +332,7 @@ class _BookLawyerPageState extends State<BookLawyerPage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(
-                '✅ Case submitted to $displayName (${type == 'lawyer' ? 'Lawyer' : 'Law Firm'})')),
+                '✅ Case submitted to $displayName (${type == 'lawyer' ? 'Lawyer' : 'Law Firm'}')),
       );
 
       setState(() {
@@ -697,9 +697,10 @@ class _BookLawyerPageState extends State<BookLawyerPage>
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _lawFirms.length,
-            itemBuilder: (context, index) {
-              final firm = _lawFirms[index];
+            itemBuilder: (context, firmIndex) {
+              final firm = _lawFirms[firmIndex];
               final isAvailable = _firmAvailability[firm['id']] ?? true;
+
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(

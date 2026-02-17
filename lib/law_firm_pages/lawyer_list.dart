@@ -11,7 +11,7 @@ class LawyersListPage extends StatelessWidget {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       return const Scaffold(
-        backgroundColor: Colors.brown,
+        backgroundColor: Colors.black,
         body: Center(
           child: Text(
             '⚠️ Not logged in',
@@ -30,21 +30,28 @@ class LawyersListPage extends StatelessWidget {
         .snapshots();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1A17),
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: const Color(0xFF1E1E1E),
         title: const Text(
           'My Lawyers',
-          style: TextStyle(color: Color(0xFFD4AF37)),
+          style: TextStyle(
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color(0xFF3E2723),
+        centerTitle: true,
+        elevation: 2,
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Color(0xFFD4AF37)),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const AddLawyerPage()));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AddLawyerPage(),
+                ),
+              );
             },
           )
         ],
@@ -71,7 +78,7 @@ class LawyersListPage extends StatelessWidget {
             return const Center(
               child: Text(
                 'No lawyers added yet.',
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             );
           }
@@ -86,20 +93,77 @@ class LawyersListPage extends StatelessWidget {
               final data = doc.data() as Map<String, dynamic>;
 
               return Card(
-                color: const Color(0xFF4E342E),
+                color: Colors.grey[900],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(
+                    color: Color(0xFFD4AF37),
+                    width: 0.5,
+                  ),
                 ),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: const Color(0xFFD4AF37),
+                    child: Text(
+                      (data['name'] ?? 'L')[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   title: Text(
                     data['name'] ?? 'No Name',
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                  subtitle: Text(
-                    'Email: ${data['email'] ?? 'N/A'}\nRole: Lawyer',
-                    style: const TextStyle(color: Colors.white70),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      Text(
+                        'Email: ${data['email'] ?? 'N/A'}',
+                        style: const TextStyle(
+                          color: Color(0xFFD4AF37),
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Specialization: ${data['specialization'] ?? 'General'}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: PopupMenuButton(
+                    color: Colors.grey[800],
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: const Text(
+                          'Edit',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onTap: () {
+                          // Add edit functionality here
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        onTap: () {
+                          // Add delete functionality here
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
